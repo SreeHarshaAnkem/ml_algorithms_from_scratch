@@ -118,7 +118,7 @@ def save_plots(train_loss, validation_loss, train_label=None, validation_label=N
         plt.ylabel("Mean Squared Error")
         plt.title("Change in Loss after each epoch")
         plt.legend()
-        plt.savefig("Loss.png")
+        plt.savefig("LinearRegression_Loss.png")
         plt.close()
 
 class LinearRegression:
