@@ -132,26 +132,28 @@ class LinearRegression:
                 y_batch_pred = np.dot(X_batch, self.coeff)
                 gradient = compute_gradient(X_batch, y_batch, y_batch_pred)
                 self.coeff = self.coeff-self.alpha*gradient
+            # Get predictions of validation.
             val_y_pred = np.dot(val_X, self.coeff)
             val_loss = compute_loss(val_y, val_y_pred)
             val_loss_dict[i] = val_loss
+            # Get predictions of train.
             train_y_pred = np.dot(train_X, self.coeff)
             train_loss = compute_loss(train_y, train_y_pred)
             train_loss_dict[i] = train_loss
-
+            # Get r2 score of train.
             r2_train = generate_metrics(train_y, train_y_pred)
+            # Get r2 score of validation.
             r2_val = generate_metrics(val_y, val_y_pred)
-
             if i%(self.iterations//10) == 0:
                 print("""Iteration : {} ... Train Loss : {} ...
                       Val Loss : {} ... Train R2 : {} ... Val R2 : {}""".\
                     format(i, train_loss, val_loss, r2_train, r2_val))
-
+            # Early Stopping.
             if i > 2:
                 if (val_loss_dict[i-1]-val_loss_dict[i]) < 1e-8:
                     print("Early Stopping, found no improvement")
                     break
-
+        # Get Final metrics of test.
         test_y_pred = np.dot(test_X, self.coeff)
         test_loss = compute_loss(test_y, test_y_pred)
         r2_test = generate_metrics(test_y, test_y_pred)
