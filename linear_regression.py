@@ -1,7 +1,4 @@
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.datasets import make_regression
 
 def compute_loss(y_true, y_pred):
     """
@@ -47,7 +44,6 @@ def generate_dataset():
 
 
 def generate_train_batch(X, y, batch_size):
-
     """
     Generates batches of training data
     Input:
