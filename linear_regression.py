@@ -99,6 +99,28 @@ def initialize_weights(X):
     w = np.random.rand(X.shape[1], 1)
     return w
 
+def treat_outliers(y_true):
+    """
+    Caps the tails before 5th percentile and after 90th percentile.
+    """
+    q_90 = np.quantile(y_true, q = 0.9)
+    y_true = np.where(y_true>q_90, q_90, y_true)
+    q_05 = np.quantile(y_true, q = 0.05)
+    y_true = np.where(y_true<q_05, q_05, y_true)
+    return y_true
+
+def save_plots(train_loss, validation_loss, train_label=None, validation_label=None):
+        # Save Plots
+        import matplotlib.pyplot as plt
+        plt.plot(train_loss.keys(), train_loss.values(), label = "Train Loss; R2 :"+str(train_label))
+        plt.plot(validation_loss.keys(), validation_loss.values(), label = "Validation Loss; R2 :"+str(validation_label))
+        plt.xlabel("Epoch")
+        plt.ylabel("Mean Squared Error")
+        plt.title("Change in Loss after each epoch")
+        plt.legend()
+        plt.savefig("Loss.png")
+        plt.close()
+
 class LinearRegression:
     """
     Blue Print for Linear Regression 
@@ -120,14 +142,26 @@ class LinearRegression:
             2. y
         """
         from sklearn.model_selection import train_test_split
+        bins     = np.linspace(0, 10, 5)
+        y_binned = np.digitize(y, bins)
         train_X, test_val_X, train_y, test_val_y = train_test_split(X, y,
                                                                     random_state=9,
-                                                                    test_size=0.2)
+                                                                    test_size=0.2,
+                                                                    stratify=y_binned)
+        bins     = np.linspace(0, 10, 5)
+        y_binned = np.digitize(test_val_y, bins)
         val_X, test_X, val_y, test_y = train_test_split(test_val_X, test_val_y,
-                                                        random_state=9,
-                                                        test_size=0.5)                                              
+                                                        random_state=5,
+                                                        test_size=0.5,
+                                                        stratify=y_binned
+                                                        )
+        # Treat Outliers.   
+        train_y = treat_outliers(train_y)    
+        test_y = treat_outliers(test_y)   
+        val_y = treat_outliers(val_y)   
+        # Start Training.                                  
         val_loss_dict, train_loss_dict = dict(), dict()
-        for i in range(self.iterations):
+        for i in range(1, self.iterations+1):
             for X_batch, y_batch in generate_train_batch(train_X, train_y, self.batch_size):
                 y_batch_pred = np.dot(X_batch, self.coeff)
                 gradient = compute_gradient(X_batch, y_batch, y_batch_pred)
@@ -149,7 +183,7 @@ class LinearRegression:
                       Val Loss : {} ... Train R2 : {} ... Val R2 : {}""".\
                     format(i, train_loss, val_loss, r2_train, r2_val))
             # Early Stopping.
-            if i > 2:
+            if i > 2 and i <self.iterations+1:
                 if (val_loss_dict[i-1]-val_loss_dict[i]) < 1e-8:
                     print("Early Stopping, found no improvement")
                     break
@@ -157,11 +191,16 @@ class LinearRegression:
         test_y_pred = np.dot(test_X, self.coeff)
         test_loss = compute_loss(test_y, test_y_pred)
         r2_test = generate_metrics(test_y, test_y_pred)
+        print("""Iteration : {} ... Train Loss : {} ...
+                 Val Loss : {} ... Train R2 : {} ... Val R2 : {}""".\
+                 format(i, train_loss, val_loss, r2_train, r2_val))
         print("Iteration : {} ... Test Loss : {} ... Test R2 : {}".format(i, test_loss, r2_test))
+        save_plots(train_loss_dict, val_loss_dict, r2_train, r2_val)
+
 
 if __name__ == "__main__":
     features, target = generate_dataset()
     initial_w = initialize_weights(features)
-    lr = LinearRegression(alpha=1e-3, iterations=100, batch_size=32, coeff=initial_w)
+    lr = LinearRegression(alpha=1e-3, iterations=50, batch_size=32, coeff=initial_w)
     lr.train_model(features, target)
     print("Coeff : {}".format(lr.coeff))
