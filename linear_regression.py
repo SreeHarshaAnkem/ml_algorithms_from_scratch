@@ -204,3 +204,8 @@ if __name__ == "__main__":
     lr = LinearRegression(alpha=1e-3, iterations=50, batch_size=32, coeff=initial_w)
     lr.train_model(features, target)
     print("Coeff : {}".format(lr.coeff))
+    """
+    Coeff : [[40.35324118]
+              [11.63261317]
+              [ 0.13882882]]
+    """
