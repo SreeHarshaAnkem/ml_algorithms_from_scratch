@@ -2,38 +2,38 @@ import numpy as np
 
 def sigmoid(x):
     """
-        Applies Sigmoid Transformation
-        A = 1/(1+e^(-x))
+    Applies Sigmoid Transformation
+    A = 1/(1+e^(-x))
     """
     return 1/(1+np.exp(-x))
 
 def compute_loss(y_true, y_pred):
     """
-        Computes the log-loss.
-        J(w) = -(ylog(p)+(1-y)log(1-p))
-        Input:
-        =====
-            1. y_true
-            2. y_pred
-        
-        Output:
-        ======
-            1. Computed Loss
+    Computes the log-loss.
+    J(w) = -(ylog(p)+(1-y)log(1-p))
+    Input:
+    =====
+        1. y_true
+        2. y_pred
+    
+    Output:
+    ======
+        1. Computed Loss
     """
     loss = -np.sum(y_true*np.log(y_pred)+(1-y_true)*np.log(1-y_pred))/(y_true.shape[0])
     return loss
 
 def compute_gradient(w, y_true, X):
     """
-        Performs Numerical Differentiation
-        Input:
-        ======
-            1. w : Current Weight Matrix
-            2. y_true
-            3. X
-        Output:
-        =======
-            1. Gradient
+    Performs Numerical Differentiation
+    Input:
+    ======
+        1. w : Current Weight Matrix
+        2. y_true
+        3. X
+    Output:
+    =======
+        1. Gradient
     """
     epsilon = 1e-3
     y_pred = sigmoid(np.dot(X, w))
