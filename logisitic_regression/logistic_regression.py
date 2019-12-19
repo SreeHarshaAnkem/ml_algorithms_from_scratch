@@ -43,7 +43,7 @@ def compute_gradient(w, y_true, X):
 
 def generate_metrics(y_true, y_pred, save_fig=False):
     """
-    Calculates the R2 Score 
+    Calculates the F1 Score 
     Input:
     =====
         1. y_true
