@@ -4,7 +4,7 @@ Implementation of ML algorithms using numpy.
  - Linear Regression
  - Logisitic Regression
 
-*Components:*
+___Components:__
   - Mini Batch Gradient Descent
   - R squared
   - Binary Cross Entropy
