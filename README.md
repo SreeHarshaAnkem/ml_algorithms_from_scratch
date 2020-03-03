@@ -1,5 +1,5 @@
 # ml_algorithms_from_scratch.
-Implementation of ML algorithms using numpy.
+## Implementation of ML algorithms using numpy.
 __Algorithms list:__
  - Linear Regression
  - Logisitic Regression
